@@ -95,8 +95,8 @@ Ready for Play Store submission. See `play_store_checklist.md` for launch prepar
 
 ## License
 
-[Add your license here]
+[-]
 
 ## Credits
 
-Developed by [Your Name]
+Developed by [Sam]
