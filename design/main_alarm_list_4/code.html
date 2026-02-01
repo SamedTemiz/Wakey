@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Set New Alarm - Light Theme</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+<script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              background: "#fefefe", 
+              surface: "#f7f7f9", 
+              "text-primary": "#1f1e2c",
+              "text-secondary": "#9b9495",
+              "accent-pink": "#e37d92",
+              "accent-peach": "#ed9d6f",
+              "confirm-gold": "#f6c57d",
+              "track-gray": "#e5e7eb",
+            },
+            fontFamily: {
+              display: ["Montserrat", "sans-serif"],
+            },
+            borderRadius: {
+              DEFAULT: "1rem",
+              'xl': "1.5rem",
+              '2xl': "2rem",
+            },
+            boxShadow: {
+                'glow': '0 4px 20px rgba(246, 197, 125, 0.4)',
+                'card-selected': '0 4px 12px rgba(227, 125, 146, 0.2)',
+            }
+          },
+        },
+      };
+    </script>
+<style>
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+    }
+    .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+    .clock-handle {
+        transform-origin: center;transform: rotate(225deg); 
+    }
+</style>
+<style>
+    body {
+      min-height: max(800px, 100dvh);
+    }
+</style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background font-display antialiased min-h-screen flex flex-col relative overflow-hidden text-text-primary">
+<div class="w-full h-12 flex justify-between items-center px-6 text-sm font-medium text-text-primary z-20 pt-2">
+<span>9:41</span>
+<div class="flex items-center gap-1">
+<span class="material-icons-round text-base">signal_cellular_alt</span>
+<span class="material-icons-round text-base">wifi</span>
+<span class="material-icons-round text-base">battery_full</span>
+</div>
+</div>
+<header class="px-6 py-4 flex justify-between items-center z-20">
+<button class="w-10 h-10 -ml-2 flex items-center justify-center rounded-full hover:bg-surface transition-colors text-text-primary">
+<span class="material-icons-round">close</span>
+</button>
+<h1 class="text-xl font-semibold text-text-primary">Set Alarm</h1>
+<button class="text-sm font-semibold text-text-secondary hover:text-accent-pink transition-colors">
+        Reset
+    </button>
+</header>
+<main class="flex-1 overflow-y-auto px-6 pb-32 scrollbar-hide z-10">
+<div class="flex flex-col items-center justify-center mt-2 mb-10">
+<div class="relative w-72 h-72 flex items-center justify-center">
+<svg class="absolute inset-0 w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+<circle cx="50" cy="50" fill="none" r="44" stroke="#e5e7eb" stroke-width="5"></circle>
+<circle cx="50" cy="50" fill="none" r="44" stroke="#ed9d6f" stroke-dasharray="172.8 276.5" stroke-linecap="round" stroke-width="5"></circle>
+</svg>
+<div class="absolute inset-0 clock-handle">
+<div class="absolute top-[6%] left-1/2 -translate-x-1/2 w-6 h-6 bg-background border-[4px] border-accent-peach rounded-full shadow-md z-10"></div>
+</div>
+<div class="flex flex-col items-center z-10">
+<div class="flex items-baseline text-text-primary">
+<span class="text-6xl font-light tracking-tighter">07</span>
+<span class="text-6xl font-light tracking-tighter -mt-2">:</span>
+<span class="text-6xl font-light tracking-tighter">30</span>
+</div>
+<div class="flex gap-2 mt-2">
+<button class="px-4 py-1.5 rounded-full bg-accent-peach text-white text-xs font-bold shadow-sm tracking-wide">AM</button>
+<button class="px-4 py-1.5 rounded-full text-text-secondary text-xs font-bold hover:bg-surface transition-colors tracking-wide">PM</button>
+</div>
+</div>
+</div>
+<p class="text-xs font-medium text-text-secondary mt-2 flex items-center gap-1.5 bg-surface px-3 py-1.5 rounded-lg">
+<span class="material-icons-round text-sm">notifications_active</span>
+            Alarm in 7h 20m
+        </p>
+</div>
+<div class="mb-8">
+<div class="flex justify-between items-end mb-4">
+<h2 class="text-lg font-semibold text-text-primary">Mission</h2>
+<span class="text-[10px] font-bold uppercase tracking-wider text-accent-pink bg-accent-pink/10 px-2 py-1 rounded-md border border-accent-pink/20">Mandatory</span>
+</div>
+<div class="grid grid-cols-3 gap-4">
+<div class="aspect-[3/4] rounded-2xl border-2 border-accent-pink bg-white flex flex-col items-center justify-center gap-3 relative shadow-card-selected transition-all transform scale-[1.02]">
+<div class="absolute top-2 right-2 text-accent-pink">
+<span class="material-icons-round text-lg">check_circle</span>
+</div>
+<div class="w-12 h-12 rounded-full bg-surface flex items-center justify-center text-text-primary shadow-sm">
+<span class="material-icons-round text-2xl">directions_walk</span>
+</div>
+<span class="text-sm font-semibold text-text-primary">Steps</span>
+</div>
+<div class="aspect-[3/4] rounded-2xl border border-transparent bg-surface flex flex-col items-center justify-center gap-3 hover:bg-white hover:shadow-sm transition-all cursor-pointer group">
+<div class="w-12 h-12 rounded-full bg-white flex items-center justify-center text-text-secondary group-hover:text-text-primary transition-colors">
+<span class="material-icons-round text-2xl">qr_code_scanner</span>
+</div>
+<span class="text-sm font-medium text-text-secondary group-hover:text-text-primary">Scan</span>
+</div>
+<div class="aspect-[3/4] rounded-2xl border border-transparent bg-surface flex flex-col items-center justify-center gap-3 hover:bg-white hover:shadow-sm transition-all cursor-pointer group">
+<div class="w-12 h-12 rounded-full bg-white flex items-center justify-center text-text-secondary group-hover:text-text-primary transition-colors">
+<span class="material-icons-round text-2xl">calculate</span>
+</div>
+<span class="text-sm font-medium text-text-secondary group-hover:text-text-primary">Math</span>
+</div>
+</div>
+</div>
+<div class="space-y-3">
+<button class="w-full bg-surface p-4 rounded-2xl flex items-center justify-between group hover:bg-white hover:shadow-sm transition-all border border-transparent">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 flex items-center justify-center rounded-full bg-white text-text-secondary group-hover:text-text-primary transition-colors">
+<span class="material-icons-round text-lg">repeat</span>
+</div>
+<span class="font-medium text-text-primary">Repeat</span>
+</div>
+<div class="flex items-center gap-1 text-text-secondary">
+<span class="text-sm font-medium text-accent-peach">Mon - Fri</span>
+<span class="material-icons-round text-lg">chevron_right</span>
+</div>
+</button>
+<button class="w-full bg-surface p-4 rounded-2xl flex items-center justify-between group hover:bg-white hover:shadow-sm transition-all border border-transparent">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 flex items-center justify-center rounded-full bg-white text-text-secondary group-hover:text-text-primary transition-colors">
+<span class="material-icons-round text-lg">music_note</span>
+</div>
+<span class="font-medium text-text-primary">Sound</span>
+</div>
+<div class="flex items-center gap-1 text-text-secondary">
+<span class="text-sm">Morning Rain</span>
+<span class="material-icons-round text-lg">chevron_right</span>
+</div>
+</button>
+<button class="w-full bg-surface p-4 rounded-2xl flex items-center justify-between group hover:bg-white hover:shadow-sm transition-all border border-transparent">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 flex items-center justify-center rounded-full bg-white text-text-secondary group-hover:text-text-primary transition-colors">
+<span class="material-icons-round text-lg">label</span>
+</div>
+<span class="font-medium text-text-primary">Label</span>
+</div>
+<div class="flex items-center gap-1 text-text-secondary">
+<span class="text-sm">Work</span>
+<span class="material-icons-round text-lg">chevron_right</span>
+</div>
+</button>
+</div>
+</main>
+<div class="fixed bottom-0 left-0 w-full p-6 bg-gradient-to-t from-background via-background to-transparent z-30">
+<button class="w-full h-14 bg-confirm-gold text-white rounded-2xl shadow-glow font-bold text-lg tracking-wide flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.99] transition-all">
+<span class="material-icons-round">check</span>
+        Confirm
+    </button>
+</div>
+
+</body></html>

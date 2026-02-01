@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Step Mission - Light Theme</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+<script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              background: "#fefefe", 
+              "text-primary": "#1f1e2c",
+              "text-secondary": "#9b9495",
+              "accent-pink": "#e37d92",
+              "accent-peach": "#ed9d6f",
+              "glow-color": "#f6c57d",
+              "surface-muted": "#f2f2f5",
+            },
+            fontFamily: {
+              display: ["Montserrat", "sans-serif"],
+            },
+            borderRadius: {
+              DEFAULT: "1rem",
+              'xl': "1.5rem",
+              '2xl': "2rem",
+              '3xl': "2.5rem",
+            },
+            boxShadow: {
+                'soft': '0 10px 40px -10px rgba(31, 30, 44, 0.05)',
+                'glow': '0 0 20px rgba(246, 197, 125, 0.4)',
+            }
+          },
+        },
+      };
+    </script>
+<style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+        }
+        .progress-ring__circle {
+            transition: stroke-dashoffset 0.5s ease-out;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+        @keyframes walk-bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+        .animate-walk {
+            animation: walk-bounce 1s infinite ease-in-out;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-text-primary min-h-screen flex flex-col relative overflow-hidden selection:bg-accent-peach selection:text-white">
+<div class="w-full h-12 flex justify-between items-center px-6 text-sm font-medium text-text-primary z-20 pt-2">
+<span>06:31</span>
+<div class="flex items-center gap-1">
+<span class="material-icons-round text-base">signal_cellular_alt</span>
+<span class="material-icons-round text-base">wifi</span>
+<span class="material-icons-round text-base">battery_full</span>
+</div>
+</div>
+<div class="absolute top-0 left-0 w-full h-full pointer-events-none z-0 overflow-hidden">
+<div class="absolute -top-[5%] -right-[15%] w-[80%] h-[70%] bg-accent-peach/5 blur-[120px] rounded-full"></div>
+<div class="absolute bottom-[0%] -left-[10%] w-[60%] h-[60%] bg-accent-pink/5 blur-[100px] rounded-full"></div>
+</div>
+<main class="flex-1 flex flex-col items-center justify-center z-10 w-full max-w-md mx-auto px-6 relative">
+<div class="absolute top-6 w-full text-center">
+<h1 class="text-xs font-bold tracking-[0.2em] text-text-secondary uppercase mb-2">Morning Mission</h1>
+<p class="text-text-primary font-medium opacity-80 flex items-center justify-center gap-2">
+<span class="material-icons-round text-sm text-accent-peach">alarm</span> 
+                06:30 AM
+             </p>
+</div>
+<div class="relative w-80 h-80 flex items-center justify-center mb-12 mt-8">
+<svg class="w-full h-full transform drop-shadow-sm" viewBox="0 0 300 300">
+<defs>
+<linearGradient id="gradient" x1="0%" x2="100%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#f6c57d"></stop>
+<stop offset="100%" stop-color="#ed9d6f"></stop>
+</linearGradient>
+</defs>
+<circle cx="150" cy="150" fill="none" r="130" stroke="#f2f2f5" stroke-linecap="round" stroke-width="22"></circle>
+<circle class="progress-ring__circle" cx="150" cy="150" fill="none" r="130" stroke="url(#gradient)" stroke-dasharray="816.8" stroke-dashoffset="490" stroke-linecap="round" stroke-width="22" style="filter: drop-shadow(0px 4px 10px rgba(237, 157, 111, 0.4));"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center pt-2">
+<div class="animate-walk w-14 h-14 rounded-full bg-surface-muted flex items-center justify-center mb-1 text-accent-peach shadow-inner">
+<span class="material-icons-round text-3xl">directions_walk</span>
+</div>
+<div class="flex items-baseline gap-1 mt-1">
+<span class="text-[5rem] font-bold text-text-primary tracking-tighter leading-none">12</span>
+</div>
+<div class="text-lg font-semibold text-text-secondary mt-1">/ 30 steps</div>
+</div>
+</div>
+<div class="text-center space-y-4 mb-8">
+<h2 class="text-2xl font-bold text-text-primary">Keep Moving</h2>
+<p class="text-text-secondary font-medium leading-relaxed max-w-[260px] mx-auto">
+                Walk 18 more steps to complete your mission and wake up.
+            </p>
+</div>
+</main>
+<div class="w-full p-8 z-20">
+<button class="w-full py-5 rounded-2xl bg-text-secondary text-white font-bold text-lg flex items-center justify-center gap-3 transition-all cursor-not-allowed opacity-40 shadow-none" disabled="">
+<span class="material-icons-round text-2xl">alarm_off</span>
+<span>Dismiss</span>
+</button>
+<div class="mt-6 flex justify-center">
+<button class="text-xs font-bold text-text-secondary/50 hover:text-text-secondary transition-colors uppercase tracking-widest flex items-center gap-2 py-2 px-4 rounded-full hover:bg-surface-muted">
+<span class="material-icons-round text-base">emergency_share</span> Emergency Stop
+             </button>
+</div>
+</div>
+
+</body></html>

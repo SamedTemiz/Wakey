@@ -1,0 +1,46 @@
+# Gradle
+*.iml
+.gradle
+/local.properties
+/.idea
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+
+# Android Studio
+*.apk
+*.ap_
+*.dex
+*.class
+bin/
+gen/
+out/
+
+# Release signing
+*.jks
+*.keystore
+keystore.properties
+signing.properties
+
+# User-specific
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/gradle.xml
+.idea/assetWizardSettings.xml
+.idea/dictionaries
+.idea/libraries
+.idea/caches
+.idea/modules.xml
+.idea/navEditor.xml
+
+# Sensitive
+google-services.json
+crashlytics.properties
+fabric.properties
+
+# Temp files
+temp_channel.txt
+*.tmp

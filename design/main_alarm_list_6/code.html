@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Voice Mission - Light Theme</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+<script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              background: "#fefefe", 
+              surface: "#ffffff", 
+              "text-primary": "#1f1e2c",
+              "text-secondary": "#9b9495",
+              "accent-pink": "#e37d92",
+              "accent-peach": "#ed9d6f",
+              "glow-color": "#f6c57d",
+            },
+            fontFamily: {
+              display: ["Montserrat", "sans-serif"],
+            },
+            borderRadius: {
+              DEFAULT: "1rem",
+              'xl': "1.5rem",
+              '2xl': "2rem",
+              '3xl': "2.5rem",
+            },
+            boxShadow: {
+                'soft': '0 20px 40px -15px rgba(31, 30, 44, 0.1)',
+                'glow': '0 0 25px rgba(227, 125, 146, 0.4)',
+                'inner-white': 'inset 0 0 0 1px rgba(255, 255, 255, 0.5)',
+            }
+          },
+        },
+      };
+    </script>
+<style>.pulse-ring {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        border: 2px solid #e37d92;
+        opacity: 0;
+        animation: pulse-ring-anim 2.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+    }
+    .pulse-ring:nth-child(2) {
+        animation-delay: 0.6s;
+    }
+    .pulse-ring:nth-child(3) {
+        animation-delay: 1.2s;
+    }
+    @keyframes pulse-ring-anim {
+        0% {
+            width: 80px;
+            height: 80px;
+            opacity: 0.8;
+            border-width: 3px;
+        }
+        50% {
+            opacity: 0.5;
+        }
+        100% {
+            width: 280px;
+            height: 280px;
+            opacity: 0;
+            border-width: 0px;
+        }
+    }.sound-wave-bar {
+        background: linear-gradient(to top, #e37d92, #ed9d6f);
+        border-radius: 999px;
+        animation: sound-wave 1.2s ease-in-out infinite;
+    }
+    @keyframes sound-wave {
+        0%, 100% { height: 20%; }
+        50% { height: 80%; }
+    }
+    .sound-wave-bar:nth-child(1) { animation-delay: 0.0s; height: 30%; }
+    .sound-wave-bar:nth-child(2) { animation-delay: 0.2s; height: 50%; }
+    .sound-wave-bar:nth-child(3) { animation-delay: 0.4s; height: 70%; }
+    .sound-wave-bar:nth-child(4) { animation-delay: 0.1s; height: 90%; }
+    .sound-wave-bar:nth-child(5) { animation-delay: 0.3s; height: 60%; }
+    .sound-wave-bar:nth-child(6) { animation-delay: 0.5s; height: 40%; }
+</style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background font-display antialiased min-h-screen flex flex-col relative overflow-hidden text-text-primary">
+<div class="w-full h-12 flex justify-between items-center px-6 text-sm font-medium text-text-primary z-20 pt-2">
+<span>07:00</span>
+<div class="flex items-center gap-1 text-text-primary">
+<span class="material-icons-round text-base">signal_cellular_alt</span>
+<span class="material-icons-round text-base">wifi</span>
+<span class="material-icons-round text-base">battery_full</span>
+</div>
+</div>
+<div class="fixed top-0 left-0 w-full h-full pointer-events-none z-0">
+<div class="absolute -top-[10%] -left-[20%] w-[80%] h-[80%] bg-accent-pink/5 blur-[120px] rounded-full mix-blend-multiply"></div>
+<div class="absolute bottom-[10%] -right-[20%] w-[70%] h-[70%] bg-accent-peach/5 blur-[120px] rounded-full mix-blend-multiply"></div>
+</div>
+<main class="flex-1 flex flex-col items-center justify-between px-6 pt-6 pb-12 z-10 relative w-full max-w-md mx-auto h-full">
+<div class="flex flex-col items-center gap-2">
+<div class="flex items-center gap-2 px-4 py-1.5 bg-surface rounded-full shadow-sm border border-gray-100">
+<span class="material-icons-round text-accent-pink text-sm">mic</span>
+<span class="text-xs font-semibold tracking-wider text-text-secondary uppercase">Voice Mission</span>
+</div>
+<div class="text-center mt-4">
+<h1 class="text-7xl font-light text-text-primary tracking-tighter">07:00</h1>
+<p class="text-text-secondary font-medium mt-1">Alarm Ringing</p>
+</div>
+</div>
+<div class="w-full relative mt-8">
+<div class="absolute -inset-0.5 bg-gradient-to-r from-accent-pink to-accent-peach rounded-3xl opacity-20 blur-sm"></div>
+<div class="relative bg-surface p-8 rounded-2xl shadow-soft border border-white/80 flex flex-col items-center text-center">
+<p class="text-xs font-bold text-accent-peach uppercase tracking-widest mb-4">Read this phrase</p>
+<h2 class="text-3xl font-bold text-text-primary leading-tight">
+                    "Every morning starts a new page in your story."
+                </h2>
+</div>
+</div>
+<div class="flex-1 flex flex-col items-center justify-center w-full relative min-h-[250px]">
+<div class="relative w-full h-full flex items-center justify-center">
+<div class="pulse-ring"></div>
+<div class="pulse-ring"></div>
+<div class="pulse-ring"></div>
+<div class="relative w-24 h-24 rounded-full bg-gradient-to-br from-accent-pink to-accent-peach flex items-center justify-center shadow-glow z-10 text-white transform transition hover:scale-105 active:scale-95 cursor-pointer border-[3px] border-white">
+<span class="material-icons-round text-4xl">mic</span>
+</div>
+</div>
+</div>
+<div class="w-full flex flex-col items-center gap-6 mb-4">
+<div class="h-12 flex items-center justify-center gap-1.5">
+<div class="sound-wave-bar w-1.5"></div>
+<div class="sound-wave-bar w-1.5"></div>
+<div class="sound-wave-bar w-1.5"></div>
+<div class="sound-wave-bar w-1.5"></div>
+<div class="sound-wave-bar w-1.5"></div>
+<div class="sound-wave-bar w-1.5"></div>
+</div>
+<p class="text-text-secondary text-sm font-medium animate-pulse">Listening for phrase...</p>
+<button class="mt-2 text-text-secondary hover:text-text-primary transition-colors text-sm font-semibold tracking-wide">
+                Snooze for 5 min
+            </button>
+</div>
+</main>
+
+</body></html>

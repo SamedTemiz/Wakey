@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Light Mission - Ringing UI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+<script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              background: "#fefefe", 
+              surface: "#ffffff", 
+              "text-primary": "#1f1e2c",
+              "text-secondary": "#9b9495",
+              "accent-pink": "#e37d92",
+              "accent-peach": "#ed9d6f",
+              "glow-color": "#f6c57d",
+            },
+            fontFamily: {
+              display: ["Montserrat", "sans-serif"],
+            },
+            borderRadius: {
+              DEFAULT: "1rem",
+              'xl': "1.5rem",
+              '2xl': "2rem",
+              '3xl': "3rem",
+            },
+            boxShadow: {
+                'soft': '0 20px 40px -10px rgba(227, 125, 146, 0.25)', 
+                'glow': '0 0 15px rgba(246, 197, 125, 0.6)',
+            }
+          },
+        },
+      };
+    </script>
+<style>
+    body {
+        min-height: max(884px, 100dvh);
+    }
+    .text-glow {
+        text-shadow: 0 0 12px rgba(246, 197, 125, 0.6);
+    }
+    .meter-shadow {
+        filter: drop-shadow(0 0 6px rgba(246, 197, 125, 0.4));
+    }
+</style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background font-display antialiased min-h-screen flex flex-col relative overflow-hidden text-text-primary selection:bg-accent-pink selection:text-white">
+<div class="w-full h-12 flex justify-between items-center px-6 text-sm font-medium text-text-primary z-20 pt-2">
+<span>9:41</span>
+<div class="flex items-center gap-1">
+<span class="material-icons-round text-base">signal_cellular_alt</span>
+<span class="material-icons-round text-base">wifi</span>
+<span class="material-icons-round text-base">battery_full</span>
+</div>
+</div>
+<main class="flex-1 flex flex-col items-center justify-between px-6 pb-12 pt-4 z-10 relative w-full max-w-md mx-auto">
+<div class="flex flex-col items-center gap-1 mt-6">
+<div class="flex items-center gap-2 text-text-secondary bg-surface px-5 py-2 rounded-full shadow-sm border border-gray-100">
+<span class="material-icons-round text-accent-peach text-sm">wb_sunny</span>
+<span class="text-sm font-semibold tracking-wide uppercase text-text-primary">Morning Wake Up</span>
+</div>
+</div>
+<div class="relative flex items-center justify-center py-6">
+<div class="relative w-72 h-72">
+<svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+<defs>
+<linearGradient id="gradientMeter" x1="0%" x2="100%" y1="0%" y2="0%">
+<stop offset="0%" style="stop-color:#f6c57d;stop-opacity:1"></stop>
+<stop offset="100%" style="stop-color:#ed9d6f;stop-opacity:1"></stop>
+</linearGradient>
+</defs>
+<circle cx="50" cy="50" fill="none" r="44" stroke="#f3f3f5" stroke-width="3"></circle>
+<circle class="meter-shadow" cx="50" cy="50" fill="none" r="44" stroke="url(#gradientMeter)" stroke-dasharray="276" stroke-dashoffset="0" stroke-linecap="round" stroke-width="3"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<h1 class="text-7xl font-light text-text-primary tracking-tighter ml-2">06:30</h1>
+<span class="text-xl font-medium text-text-secondary uppercase tracking-widest mt-2">AM</span>
+</div>
+</div>
+</div>
+<div class="w-full flex flex-col items-center gap-6">
+<div class="w-full bg-white p-5 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-50 flex items-center justify-between transition-transform active:scale-[0.99]">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-gradient-to-br from-[#f6c57d]/20 to-[#ed9d6f]/20 flex items-center justify-center text-accent-peach">
+<span class="material-icons-round text-2xl text-glow">directions_walk</span>
+</div>
+<div class="flex flex-col">
+<span class="text-xs text-text-secondary uppercase font-bold tracking-wider mb-0.5">Mission</span>
+<span class="text-lg font-bold text-text-primary">30 Steps</span>
+</div>
+</div>
+<div class="h-10 w-10 rounded-full border-2 border-gray-100 flex items-center justify-center bg-gray-50">
+<span class="material-icons-round text-gray-300 text-lg">lock</span>
+</div>
+</div>
+<div class="w-full flex flex-col gap-3">
+<button class="w-full bg-accent-pink hover:opacity-90 active:scale-[0.98] transition-all text-white py-4 rounded-2xl font-bold text-lg shadow-soft flex items-center justify-center gap-2">
+<span>Start Mission</span>
+<span class="material-icons-round">arrow_forward</span>
+</button>
+<button class="w-full bg-transparent hover:bg-gray-50 text-text-secondary py-3 rounded-xl font-medium text-sm transition-colors">
+                 Snooze for 5 minutes
+             </button>
+</div>
+</div>
+</main>
+<div class="fixed top-0 left-0 w-full h-full pointer-events-none z-0">
+<div class="absolute top-[-10%] right-[-5%] w-[300px] h-[300px] bg-gradient-to-br from-accent-peach/20 to-transparent rounded-full blur-[80px]"></div>
+<div class="absolute bottom-[-5%] left-[-10%] w-[350px] h-[350px] bg-gradient-to-tr from-accent-pink/10 to-transparent rounded-full blur-[80px]"></div>
+</div>
+
+</body></html>

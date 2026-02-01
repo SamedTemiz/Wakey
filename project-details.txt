@@ -1,0 +1,185 @@
+# ⏰ Görevle Kapanan Alarm Uygulaması
+
+## 1. Uygulamanın Amacı
+Bu uygulamanın amacı, kullanıcıların alarmı bilinçsizce kapatmasını engelleyerek **gerçekten uyanmalarını sağlamak**tır.  
+Klasik alarm uygulamalarında alarm tek dokunuşla kapatılabilirken, bu uygulamada alarm **belirli görevler tamamlanmadan kapanmaz**.
+
+Uygulama; basit, anlaşılır ve kısa sürede alışkanlık kazandıran bir yapıya sahiptir.
+
+---
+
+## 2. Temel Kullanım Akışı
+
+1. Kullanıcı alarm kurar
+2. Alarm çalar
+3. Alarm kapanmadan önce kullanıcıdan **bir görev** istenir
+4. Görev tamamlanır
+5. Alarm kapanır
+
+> Görev tamamlanmadan alarm sesi durmaz.
+
+---
+
+## 3. Alarm Kurma Süreci
+
+Alarm oluştururken kullanıcı:
+- Saat ve dakika seçer
+- Günleri belirler (tek seferlik veya tekrarlı)
+- Alarm sesini seçer
+- Alarm kapatma görevini seçer
+
+Her alarm için **tek görev** atanır.
+
+---
+
+## 4. Alarm Çaldığında Olanlar
+
+Alarm çaldığında:
+- Tam ekran bir alarm ekranı açılır
+- Geri tuşu, uygulamadan çıkış ve kilitleme engellenir
+- Alarm sesi durmaksızın çalar
+- Ekranda yalnızca görev bilgisi görünür
+
+Kapatma butonu **pasif durumdadır**.
+
+---
+
+## 5. Görev Türleri ve Detayları
+
+### 5.1 🚶 Adım Atma Görevi
+**Amaç:** Kullanıcının yataktan kalkmasını sağlamak.
+
+**Görev Tanımı:**
+- Kullanıcının alarmı kapatabilmesi için belirlenen sayıda adım atması gerekir.
+
+**Davranış:**
+- Adımlar gerçek zamanlı sayılır
+- Hedefe ulaşıldığında kapatma butonu aktif olur
+
+**Kullanıcı Deneyimi:**
+- “Alarmı kapatmak için 30 adım at”
+
+---
+
+### 5.2 📱 Telefonu Dikey Tutma Görevi
+**Amaç:** Yatakta yatarken alarm kapatmayı zorlaştırmak.
+
+**Görev Tanımı:**
+- Telefonun belirli bir süre boyunca dik pozisyonda tutulması gerekir.
+
+**Davranış:**
+- Telefon eğildiğinde sayaç sıfırlanır
+- Süre tamamlanınca alarm kapanabilir
+
+**Kullanıcı Deneyimi:**
+- “Telefonu dik tut ve 20 saniye bırakma”
+
+---
+
+### 5.3 ⏳ Zaman Gecikmeli Kapatma Görevi
+**Amaç:** Bilinçli bekleme süresi oluşturarak uyanıklığı artırmak.
+
+**Görev Tanımı:**
+- Alarm çaldıktan sonra kapatma butonu belirli bir süre boyunca kilitli kalır.
+
+**Davranış:**
+- Geri sayım görünür
+- Süre dolunca kapatma aktif olur
+
+**Kullanıcı Deneyimi:**
+- “Alarm 15 saniye sonra kapatılabilir”
+
+---
+
+### 5.4 🎤 Sesli Komut Görevi
+**Amaç:** Kullanıcının bilinçli bir eylem yapmasını sağlamak.
+
+**Görev Tanımı:**
+- Kullanıcının ekranda yazan kelimeyi veya cümleyi sesli söylemesi gerekir.
+
+**Davranış:**
+- Doğru ifade algılandığında alarm kapanır
+- Yanlış veya sessizlikte alarm devam eder
+
+**Kullanıcı Deneyimi:**
+- “Alarmı kapatmak için ‘Günaydın’ de”
+
+---
+
+### 5.5 💡 Ortam Işığını Artırma Görevi
+**Amaç:** Kullanıcının güne fiziksel olarak başlamasını sağlamak.
+
+**Görev Tanımı:**
+- Ortam ışığı belirli bir seviyeye ulaşana kadar alarm kapanmaz.
+
+**Davranış:**
+- Işık seviyesi anlık gösterilir
+- Hedefe ulaşınca kapatma aktif olur
+
+**Kullanıcı Deneyimi:**
+- “Perdeyi aç, ışığı artır”
+
+---
+
+## 6. Görev Kuralları
+
+- Her alarm yalnızca **tek görev** içerir
+- Görev yarım bırakılırsa alarm devam eder
+- Görev sırasında uygulamadan çıkılamaz
+- Telefon kilitlense bile alarm durmaz
+
+---
+
+## 7. Ek Davranışlar
+
+### 7.1 Snooze (Erteleme)
+- Snooze isteğe bağlıdır
+- Snooze sonrası **aynı görev tekrar edilir**
+- Süresiz snooze yoktur
+
+### 7.2 Alarm Kapatıldıktan Sonra
+- Kısa bir geri bildirim gösterilir:
+  - “Başarılı”
+  - “Görev tamamlandı”
+- Uygulama otomatik kapanır
+
+---
+
+## 8. Kullanıcıya Sağlanan Fayda
+
+- Bilinçsiz alarm kapatma engellenir
+- Sabah rutini oluşur
+- Uyanma kalitesi artar
+- Alışkanlık kazandırır
+
+---
+
+## 9. Hedef Kullanıcı Profili
+
+- Alarmı sürekli erteleyenler
+- Sabah uyanmakta zorlananlar
+- Disiplin ve rutin oluşturmak isteyenler
+- Öğrenciler ve çalışanlar
+
+---
+
+## 10. Uygulamanın Farkı
+
+- Alarm bir “buton” değil, bir “eylem” ile kapanır
+- Fiziksel hareket zorunluluğu vardır
+- Basit ama etkili bir çözüm sunar
+
+---
+
+## 11. Genişletilebilir Yapı
+
+- Yeni görev türleri eklenebilir
+- Görev zorlukları artırılabilir
+- Günlük başarı takibi eklenebilir
+
+---
+
+## 12. Özet
+
+Bu uygulama, alarmı kapatmayı bir refleks olmaktan çıkarıp **bilinçli bir davranışa** dönüştürür.  
+Kullanıcıyı zorlamadan ama kaçış da bırakmadan uyandırmayı hedefler.
