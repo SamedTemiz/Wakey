@@ -12,7 +12,8 @@ import javax.inject.Singleton
  */
 @Singleton
 class AlarmRepository @Inject constructor(
-    private val alarmDao: AlarmDao
+    private val alarmDao: AlarmDao,
+    private val billingManager: com.wakey.app.data.billing.BillingManager
 ) {
     companion object {
         const val MAX_ALARMS = 3
@@ -44,9 +45,15 @@ class AlarmRepository @Inject constructor(
     suspend fun getAlarmCount(): Int = alarmDao.getAlarmCount()
     
     /**
-     * Check if a new alarm can be added (max 3 alarms)
+     * Check if a new alarm can be added (max 3 alarms for free users)
      */
-    suspend fun canAddAlarm(): Boolean = getAlarmCount() < MAX_ALARMS
+    suspend fun canAddAlarm(): Boolean {
+        // If premium, unlimited alarms (or reasonable high limit)
+        if (billingManager.isPremium.value) return true
+        
+        // If free, check limit
+        return getAlarmCount() < MAX_ALARMS
+    }
     
     /**
      * Insert a new alarm

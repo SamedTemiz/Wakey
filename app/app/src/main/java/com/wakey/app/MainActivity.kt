@@ -48,7 +48,29 @@ class MainActivity : ComponentActivity() {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                         PermissionCheckDialog()
                     }
+                    
+                    // Request notification permission on Android 13+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        NotificationPermissionRequest()
+                    }
                 }
+            }
+        }
+    }
+
+    /**
+     * Composable to request notification permission on Android 13+
+     */
+    @Composable
+    fun NotificationPermissionRequest() {
+        val context = LocalContext.current
+        val launcher = androidx.activity.compose.rememberLauncherForActivityResult(
+            androidx.activity.result.contract.ActivityResultContracts.RequestPermission()
+        ) { _ -> }
+
+        LaunchedEffect(Unit) {
+            if (!PermissionHelper.hasNotificationPermission(context)) {
+                launcher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
             }
         }
     }

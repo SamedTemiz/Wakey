@@ -9,6 +9,7 @@ data class AlarmListUiState(
     val alarms: List<Alarm> = emptyList(),
     val isLoading: Boolean = true,
     val canAddAlarm: Boolean = true,
+    val isPremium: Boolean = false,
     val errorMessage: String? = null,
     val toastMessage: String? = null
 )

@@ -6,7 +6,7 @@
 #   http://developer.android.com/guide/developing/tools/proguard.html
 
 # Keep all classes in our package
--keep class com.wakeup.orelse.** { *; }
+-keep class com.wakey.** { *; }
 
 # Room Database
 -keep class * extends androidx.room.RoomDatabase
@@ -42,8 +42,8 @@
 }
 
 # Alarm-specific
--keep class com.wakeup.orelse.receiver.** { *; }
--keep class com.wakeup.orelse.service.** { *; }
+-keep class com.wakey.receiver.** { *; }
+-keep class com.wakey.service.** { *; }
 
 # Remove logging in release
 -assumenosideeffects class android.util.Log {

@@ -36,17 +36,30 @@ class AlarmListViewModel @Inject constructor(
      */
     private fun loadAlarms() {
         viewModelScope.launch {
-            alarmRepository.getAllAlarms().collect { alarms ->
-                val canAdd = alarmRepository.canAddAlarm()
+            kotlinx.coroutines.flow.combine(
+                alarmRepository.getAllAlarms(),
+                settingsRepository.isPremium
+            ) { alarms, isPremium ->
+                val canAdd = isPremium || alarms.size < com.wakey.app.data.repository.AlarmRepository.MAX_ALARMS
+                Triple(alarms, canAdd, isPremium)
+            }.collect { (alarms, canAdd, isPremium) ->
                 _uiState.update { currentState ->
                     currentState.copy(
                         alarms = alarms,
                         isLoading = false,
-                        canAddAlarm = canAdd
+                        canAddAlarm = canAdd,
+                        isPremium = isPremium
                     )
                 }
             }
         }
+    }
+    
+    /**
+     * Launch premium purchase flow
+     */
+    fun purchasePremium(activity: android.app.Activity) {
+        settingsRepository.launchPurchaseFlow(activity)
     }
     
     /**

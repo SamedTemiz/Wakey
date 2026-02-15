@@ -90,6 +90,12 @@ class SettingsViewModel @Inject constructor(
                 }
             }
             
+            launch {
+                settingsRepository.isPremium.collect { isPremium ->
+                    _uiState.update { it.copy(isPremium = isPremium) }
+                }
+            }
+
             _uiState.update { 
                 it.copy(
                     isLoading = false,
@@ -97,6 +103,14 @@ class SettingsViewModel @Inject constructor(
                 ) 
             }
         }
+    }
+    
+    // ============================================
+    // BILLING
+    // ============================================
+    
+    fun purchasePremium(activity: android.app.Activity) {
+        settingsRepository.launchPurchaseFlow(activity)
     }
     
     // ============================================

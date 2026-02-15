@@ -18,6 +18,7 @@ import android.os.VibratorManager
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.wakey.app.R
+import com.wakey.app.data.model.Alarm
 import com.wakey.app.ui.alarmring.AlarmRingingActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -48,7 +49,6 @@ class AlarmService : Service() {
 
         const val ACTION_START_ALARM = "com.wakey.app.START_ALARM"
         const val ACTION_STOP_ALARM = "com.wakey.app.STOP_ALARM"
-        const val EXTRA_ALARM_ID = "alarm_id"
 
         /**
          * Start the alarm service
@@ -56,7 +56,7 @@ class AlarmService : Service() {
         fun startAlarm(context: Context, alarmId: Int) {
             val intent = Intent(context, AlarmService::class.java).apply {
                 action = ACTION_START_ALARM
-                putExtra(EXTRA_ALARM_ID, alarmId)
+                putExtra(Alarm.EXTRA_ID, alarmId)
             }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -86,7 +86,7 @@ class AlarmService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
             ACTION_START_ALARM -> {
-                val alarmId = intent.getIntExtra(EXTRA_ALARM_ID, -1)
+                val alarmId = intent.getIntExtra(Alarm.EXTRA_ID, -1)
                 
                 // If same alarm is already running, do nothing (prevents Activity restart)
                 if (alarmId != -1 && alarmId == currentAlarmId) {
@@ -97,6 +97,16 @@ class AlarmService : Service() {
                 if (alarmId != -1) currentAlarmId = alarmId
                 Log.d(TAG, "Starting alarm $alarmId")
                 startForeground(NOTIFICATION_ID, createNotification())
+                
+                // Explicitly start the activity to ensure it shows immediately if app is foregrounded
+                val ringingIntent = Intent(this, AlarmRingingActivity::class.java).apply {
+                    putExtra(Alarm.EXTRA_ID, currentAlarmId)
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or
+                            Intent.FLAG_ACTIVITY_NO_USER_ACTION or
+                            Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                }
+                startActivity(ringingIntent)
+                
                 startAlarmSound()
                 startVibration()
             }
@@ -129,7 +139,7 @@ class AlarmService : Service() {
         // Full Screen Intent (opens Activity immediately if screen is off/locked)
         val fullScreenIntent = Intent(this, AlarmRingingActivity::class.java).apply {
             if (currentAlarmId != -1) {
-                putExtra("alarmId", currentAlarmId)
+                putExtra(Alarm.EXTRA_ID, currentAlarmId)
             }
             // These flags are crucial for showing over lock screen
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or

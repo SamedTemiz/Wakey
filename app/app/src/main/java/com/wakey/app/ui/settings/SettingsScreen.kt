@@ -111,358 +111,446 @@ fun SettingsScreen(
     var showResetDialog by remember { mutableStateOf(false) }
     var showSnoozeDialog by remember { mutableStateOf(false) }
     
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .statusBarsPadding()
-    ) {
-        if (uiState.isLoading) {
-            CircularProgressIndicator(
-                modifier = Modifier.align(Alignment.Center),
-                color = PrimaryCoral
-            )
-        } else {
-            Column(
+    androidx.compose.material3.Scaffold(
+        topBar = {
+            // Header - Sticky inside topBar
+            Row(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.background)
+                    .statusBarsPadding()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                // Header - Pencil: back + "Settings" (Montserrat 20px 600) + spacer, padding [8, 16]
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    // Back button - Pencil: 24x24
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Back",
-                            tint = MaterialTheme.colorScheme.onBackground,
-                            modifier = Modifier.size(24.dp)
-                        )
-                    }
-                    
-                    // Title - Pencil: Montserrat 20px weight 600
-                    Text(
-                        text = "Settings",
-                        style = MaterialTheme.typography.titleLarge.copy(
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.SemiBold
-                        ),
-                        color = MaterialTheme.colorScheme.onBackground
+                // Back button - Pencil: 24x24
+                IconButton(onClick = onNavigateBack) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Back",
+                        tint = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier.size(24.dp)
                     )
-                    
-                    // Spacer to balance the header
-                    Spacer(modifier = Modifier.size(24.dp))
                 }
                 
-                Spacer(modifier = Modifier.height(8.dp))
+                // Title - Pencil: Montserrat 20px weight 600
+                Text(
+                    text = "Settings",
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.SemiBold
+                    ),
+                    color = MaterialTheme.colorScheme.onBackground
+                )
                 
-                // ============================================
-                // ALARM DEFAULTS SECTION
-                // ============================================
-                
-                SectionHeader(title = "ALARM DEFAULTS")
-                
-                SettingsCard {
-                    // Default Sound
-                    SettingsRow(
-                        icon = Icons.Default.MusicNote,
-                        iconColor = AccentOrange,
-                        title = "Default Sound",
-                        subtitle = uiState.defaultSoundName,
-                        onClick = {
-                            val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
-                                putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM)
-                                putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true)
-                                putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, false)
-                                if (uiState.defaultSoundUri.isNotEmpty()) {
-                                    putExtra(
-                                        RingtoneManager.EXTRA_RINGTONE_EXISTING_URI,
-                                        Uri.parse(uiState.defaultSoundUri)
+                // Spacer to balance the header
+                Spacer(modifier = Modifier.size(24.dp))
+            }
+        },
+        containerColor = MaterialTheme.colorScheme.background
+    ) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+            if (uiState.isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.Center),
+                    color = PrimaryCoral
+                )
+            } else {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    
+                    // ============================================
+                    // PREMIUM SECTION
+                    // ============================================
+                    
+                    if (!uiState.isPremium) {
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp)
+                                .clickable { 
+                                    val activity = context as? Activity
+                                    if (activity != null) {
+                                        viewModel.purchasePremium(activity)
+                                    }
+                                },
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.primaryContainer
+                            ),
+                            shape = RoundedCornerShape(16.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        text = "Upgrade to Premium",
+                                        style = MaterialTheme.typography.titleMedium,
+                                        fontWeight = FontWeight.Bold,
+                                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                                    )
+                                    Text(
+                                        text = "Unlimited alarms, no ads & more!",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
                                     )
                                 }
+                                Icon(
+                                    imageVector = Icons.Default.ChevronRight,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
                             }
-                            ringtoneLauncher.launch(intent)
-                        },
-                        trailing = {
-                            Icon(
-                                imageVector = Icons.Default.ChevronRight,
-                                contentDescription = null,
-                                tint = TextSecondary
-                            )
                         }
-                    )
-                    
-                    SettingsDivider()
-                    
-                    // Default Task Type
-                    SettingsRow(
-                        icon = getTaskIcon(uiState.defaultTaskType),
-                        iconColor = getTaskColor(uiState.defaultTaskType),
-                        title = "Default Task",
-                        subtitle = getTaskDisplayName(uiState.defaultTaskType),
-                        onClick = { showTaskTypeDialog = true },
-                        trailing = {
-                            Icon(
-                                imageVector = Icons.Default.ChevronRight,
-                                contentDescription = null,
-                                tint = TextSecondary
-                            )
-                        }
-                    )
-                    
-                    SettingsDivider()
-                    
-                    // Vibration Toggle
-                    SettingsRow(
-                        icon = Icons.Default.Vibration,
-                        iconColor = PrimaryCoral,
-                        title = "Vibration",
-                        subtitle = if (uiState.vibrationEnabled) "Enabled" else "Disabled",
-                        onClick = { viewModel.toggleVibration() },
-                        trailing = {
-                            WakeUpSwitch(
-                                checked = uiState.vibrationEnabled,
-                                onCheckedChange = { viewModel.setVibrationEnabled(it) }
-                            )
-                        }
-                    )
-                }
-                
-                Spacer(modifier = Modifier.height(24.dp))
-                
-                // ============================================
-                // SNOOZE SETTINGS SECTION
-                // ============================================
-                
-                SectionHeader(title = "SNOOZE")
-                
-                SettingsCard {
-                    // Snooze Duration
-                    SettingsRow(
-                        icon = Icons.Default.Snooze,
-                        iconColor = DelayTaskColor,
-                        title = "Snooze Duration",
-                        subtitle = "${uiState.snoozeDurationMinutes} minutes",
-                        onClick = { showSnoozeDialog = true },
-                        trailing = {
-                            Icon(
-                                imageVector = Icons.Default.ChevronRight,
-                                contentDescription = null,
-                                tint = TextSecondary
-                            )
-                        }
-                    )
-                }
-                
-                Spacer(modifier = Modifier.height(24.dp))
-                
-                // ============================================
-                // TASK SETTINGS SECTION
-                // ============================================
-                
-                SectionHeader(title = "TASK DEFAULTS")
-                
-                SettingsCard {
-                    // Step Count
-                    Column(
-                        modifier = Modifier.padding(16.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
+                        Spacer(modifier = Modifier.height(24.dp))
+                    } else {
+                        // Premium Active Badge
+                         Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.secondaryContainer
+                            ),
+                            shape = RoundedCornerShape(16.dp)
                         ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                SettingsIconBox(
-                                    icon = Icons.Default.DirectionsWalk,
+                            Row(
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Check,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onSecondaryContainer
+                                )
+                                Spacer(modifier = Modifier.width(16.dp))
+                                Text(
+                                    text = "Premium Active",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                                )
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(24.dp))
+                    }
+    
+                    // ============================================
+                    // ALARM DEFAULTS SECTION
+                    // ============================================
+                    
+                    SectionHeader(title = "ALARM DEFAULTS")
+                    
+                    SettingsCard {
+                        // Default Sound
+                        SettingsRow(
+                            icon = Icons.Default.MusicNote,
+                            iconColor = AccentOrange,
+                            title = "Default Sound",
+                            subtitle = uiState.defaultSoundName,
+                            onClick = {
+                                val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
+                                    putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM)
+                                    putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true)
+                                    putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, false)
+                                    if (uiState.defaultSoundUri.isNotEmpty()) {
+                                        putExtra(
+                                            RingtoneManager.EXTRA_RINGTONE_EXISTING_URI,
+                                            Uri.parse(uiState.defaultSoundUri)
+                                        )
+                                    }
+                                }
+                                ringtoneLauncher.launch(intent)
+                            },
+                            trailing = {
+                                Icon(
+                                    imageVector = Icons.Default.ChevronRight,
+                                    contentDescription = null,
+                                    tint = TextSecondary
+                                )
+                            }
+                        )
+                        
+                        SettingsDivider()
+                        
+                        // Default Task Type
+                        SettingsRow(
+                            icon = getTaskIcon(uiState.defaultTaskType),
+                            iconColor = getTaskColor(uiState.defaultTaskType),
+                            title = "Default Task",
+                            subtitle = getTaskDisplayName(uiState.defaultTaskType),
+                            onClick = { showTaskTypeDialog = true },
+                            trailing = {
+                                Icon(
+                                    imageVector = Icons.Default.ChevronRight,
+                                    contentDescription = null,
+                                    tint = TextSecondary
+                                )
+                            }
+                        )
+                        
+                        SettingsDivider()
+                        
+                        // Vibration Toggle
+                        SettingsRow(
+                            icon = Icons.Default.Vibration,
+                            iconColor = PrimaryCoral,
+                            title = "Vibration",
+                            subtitle = if (uiState.vibrationEnabled) "Enabled" else "Disabled",
+                            onClick = { viewModel.toggleVibration() },
+                            trailing = {
+                                WakeUpSwitch(
+                                    checked = uiState.vibrationEnabled,
+                                    onCheckedChange = { viewModel.setVibrationEnabled(it) }
+                                )
+                            }
+                        )
+                    }
+                    
+                    Spacer(modifier = Modifier.height(24.dp))
+                    
+                    // ============================================
+                    // SNOOZE SETTINGS SECTION
+                    // ============================================
+                    
+                    SectionHeader(title = "SNOOZE")
+                    
+                    SettingsCard {
+                        // Snooze Duration
+                        SettingsRow(
+                            icon = Icons.Default.Snooze,
+                            iconColor = DelayTaskColor,
+                            title = "Snooze Duration",
+                            subtitle = "${uiState.snoozeDurationMinutes} minutes",
+                            onClick = { showSnoozeDialog = true },
+                            trailing = {
+                                Icon(
+                                    imageVector = Icons.Default.ChevronRight,
+                                    contentDescription = null,
+                                    tint = TextSecondary
+                                )
+                            }
+                        )
+                    }
+                    
+                    Spacer(modifier = Modifier.height(24.dp))
+                    
+                    // ============================================
+                    // TASK SETTINGS SECTION
+                    // ============================================
+                    
+                    SectionHeader(title = "TASK DEFAULTS")
+                    
+                    SettingsCard {
+                        // Step Count
+                        Column(
+                            modifier = Modifier.padding(16.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    SettingsIconBox(
+                                        icon = Icons.Default.DirectionsWalk,
+                                        color = StepsTaskColor
+                                    )
+                                    Spacer(modifier = Modifier.width(16.dp))
+                                    Text(
+                                        text = "Steps Required",
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                }
+                                Text(
+                                    text = "${uiState.defaultStepCount}",
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    fontWeight = FontWeight.Bold,
                                     color = StepsTaskColor
                                 )
-                                Spacer(modifier = Modifier.width(16.dp))
-                                Text(
-                                    text = "Steps Required",
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    fontWeight = FontWeight.Medium
-                                )
                             }
-                            Text(
-                                text = "${uiState.defaultStepCount}",
-                                style = MaterialTheme.typography.bodyLarge,
-                                fontWeight = FontWeight.Bold,
-                                color = StepsTaskColor
+                            
+                            Slider(
+                                value = uiState.defaultStepCount.toFloat(),
+                                onValueChange = { viewModel.setDefaultStepCount(it.toInt()) },
+                                valueRange = 10f..100f,
+                                steps = 8,
+                                modifier = Modifier.padding(top = 8.dp),
+                                colors = SliderDefaults.colors(
+                                    thumbColor = StepsTaskColor,
+                                    activeTrackColor = StepsTaskColor
+                                )
                             )
                         }
                         
-                        Slider(
-                            value = uiState.defaultStepCount.toFloat(),
-                            onValueChange = { viewModel.setDefaultStepCount(it.toInt()) },
-                            valueRange = 10f..100f,
-                            steps = 8,
-                            modifier = Modifier.padding(top = 8.dp),
-                            colors = SliderDefaults.colors(
-                                thumbColor = StepsTaskColor,
-                                activeTrackColor = StepsTaskColor
-                            )
-                        )
-                    }
-                    
-                    SettingsDivider()
-                    
-                    // Delay Seconds
-                    Column(
-                        modifier = Modifier.padding(16.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
+                        SettingsDivider()
+                        
+                        // Delay Seconds
+                        Column(
+                            modifier = Modifier.padding(16.dp)
                         ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                SettingsIconBox(
-                                    icon = Icons.Default.Timer,
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    SettingsIconBox(
+                                        icon = Icons.Default.Timer,
+                                        color = DelayTaskColor
+                                    )
+                                    Spacer(modifier = Modifier.width(16.dp))
+                                    Text(
+                                        text = "Wait Timer",
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                }
+                                Text(
+                                    text = "${uiState.defaultDelaySeconds}s",
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    fontWeight = FontWeight.Bold,
                                     color = DelayTaskColor
                                 )
-                                Spacer(modifier = Modifier.width(16.dp))
-                                Text(
-                                    text = "Wait Timer",
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    fontWeight = FontWeight.Medium
-                                )
                             }
-                            Text(
-                                text = "${uiState.defaultDelaySeconds}s",
-                                style = MaterialTheme.typography.bodyLarge,
-                                fontWeight = FontWeight.Bold,
-                                color = DelayTaskColor
+                            
+                            Slider(
+                                value = uiState.defaultDelaySeconds.toFloat(),
+                                onValueChange = { viewModel.setDefaultDelaySeconds(it.toInt()) },
+                                valueRange = 5f..60f,
+                                steps = 10,
+                                modifier = Modifier.padding(top = 8.dp),
+                                colors = SliderDefaults.colors(
+                                    thumbColor = DelayTaskColor,
+                                    activeTrackColor = DelayTaskColor
+                                )
                             )
                         }
                         
-                        Slider(
-                            value = uiState.defaultDelaySeconds.toFloat(),
-                            onValueChange = { viewModel.setDefaultDelaySeconds(it.toInt()) },
-                            valueRange = 5f..60f,
-                            steps = 10,
-                            modifier = Modifier.padding(top = 8.dp),
-                            colors = SliderDefaults.colors(
-                                thumbColor = DelayTaskColor,
-                                activeTrackColor = DelayTaskColor
-                            )
-                        )
-                    }
-                    
-                    SettingsDivider()
-                    
-                    // Hold Vertical Seconds
-                    Column(
-                        modifier = Modifier.padding(16.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
+                        SettingsDivider()
+                        
+                        // Hold Vertical Seconds
+                        Column(
+                            modifier = Modifier.padding(16.dp)
                         ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                SettingsIconBox(
-                                    icon = Icons.Default.PhoneAndroid,
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    SettingsIconBox(
+                                        icon = Icons.Default.PhoneAndroid,
+                                        color = VerticalTaskColor
+                                    )
+                                    Spacer(modifier = Modifier.width(16.dp))
+                                    Text(
+                                        text = "Hold Vertical",
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                }
+                                Text(
+                                    text = "${uiState.defaultHoldSeconds}s",
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    fontWeight = FontWeight.Bold,
                                     color = VerticalTaskColor
                                 )
-                                Spacer(modifier = Modifier.width(16.dp))
-                                Text(
-                                    text = "Hold Vertical",
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    fontWeight = FontWeight.Medium
+                            }
+                            
+                            Slider(
+                                value = uiState.defaultHoldSeconds.toFloat(),
+                                onValueChange = { viewModel.setDefaultHoldSeconds(it.toInt()) },
+                                valueRange = 10f..60f,
+                                steps = 9,
+                                modifier = Modifier.padding(top = 8.dp),
+                                colors = SliderDefaults.colors(
+                                    thumbColor = VerticalTaskColor,
+                                    activeTrackColor = VerticalTaskColor
+                                )
+                            )
+                        }
+                    }
+                    
+                    Spacer(modifier = Modifier.height(24.dp))
+                    
+                    // ============================================
+                    // ABOUT SECTION
+                    // ============================================
+                    
+                    SectionHeader(title = "ABOUT")
+                    
+                    SettingsCard {
+                        // App Version
+                        SettingsRow(
+                            icon = Icons.Default.Info,
+                            iconColor = TextSecondary,
+                            title = "Version",
+                            subtitle = uiState.appVersion,
+                            onClick = null,
+                            trailing = null
+                        )
+                        
+                        SettingsDivider()
+                        
+                        // Privacy Policy
+                        SettingsRow(
+                            icon = Icons.Default.Policy,
+                            iconColor = TextSecondary,
+                            title = "Privacy Policy",
+                            subtitle = "View our privacy policy",
+                            onClick = {
+                                uriHandler.openUri(viewModel.getPrivacyPolicyUrl())
+                            },
+                            trailing = {
+                                Icon(
+                                    imageVector = Icons.Default.ChevronRight,
+                                    contentDescription = null,
+                                    tint = TextSecondary
                                 )
                             }
-                            Text(
-                                text = "${uiState.defaultHoldSeconds}s",
-                                style = MaterialTheme.typography.bodyLarge,
-                                fontWeight = FontWeight.Bold,
-                                color = VerticalTaskColor
-                            )
-                        }
+                        )
                         
-                        Slider(
-                            value = uiState.defaultHoldSeconds.toFloat(),
-                            onValueChange = { viewModel.setDefaultHoldSeconds(it.toInt()) },
-                            valueRange = 10f..60f,
-                            steps = 9,
-                            modifier = Modifier.padding(top = 8.dp),
-                            colors = SliderDefaults.colors(
-                                thumbColor = VerticalTaskColor,
-                                activeTrackColor = VerticalTaskColor
-                            )
+                        SettingsDivider()
+                        
+                        // Reset to Defaults
+                        SettingsRow(
+                            icon = Icons.Default.RestartAlt,
+                            iconColor = PrimaryCoral,
+                            title = "Reset to Defaults",
+                            subtitle = "Restore all settings",
+                            onClick = { showResetDialog = true },
+                            trailing = {
+                                Icon(
+                                    imageVector = Icons.Default.ChevronRight,
+                                    contentDescription = null,
+                                    tint = TextSecondary
+                                )
+                            }
                         )
                     }
+                    
+                    // Extra bottom spacing
+                    Spacer(modifier = Modifier.height(32.dp))
+                    
+                    // Navigation bar padding for button navigation phones
+                    Spacer(modifier = Modifier.navigationBarsPadding())
                 }
-                
-                Spacer(modifier = Modifier.height(24.dp))
-                
-                // ============================================
-                // ABOUT SECTION
-                // ============================================
-                
-                SectionHeader(title = "ABOUT")
-                
-                SettingsCard {
-                    // App Version
-                    SettingsRow(
-                        icon = Icons.Default.Info,
-                        iconColor = TextSecondary,
-                        title = "Version",
-                        subtitle = uiState.appVersion,
-                        onClick = null,
-                        trailing = null
-                    )
-                    
-                    SettingsDivider()
-                    
-                    // Privacy Policy
-                    SettingsRow(
-                        icon = Icons.Default.Policy,
-                        iconColor = TextSecondary,
-                        title = "Privacy Policy",
-                        subtitle = "View our privacy policy",
-                        onClick = {
-                            uriHandler.openUri(viewModel.getPrivacyPolicyUrl())
-                        },
-                        trailing = {
-                            Icon(
-                                imageVector = Icons.Default.ChevronRight,
-                                contentDescription = null,
-                                tint = TextSecondary
-                            )
-                        }
-                    )
-                    
-                    SettingsDivider()
-                    
-                    // Reset to Defaults
-                    SettingsRow(
-                        icon = Icons.Default.RestartAlt,
-                        iconColor = PrimaryCoral,
-                        title = "Reset to Defaults",
-                        subtitle = "Restore all settings",
-                        onClick = { showResetDialog = true },
-                        trailing = {
-                            Icon(
-                                imageVector = Icons.Default.ChevronRight,
-                                contentDescription = null,
-                                tint = TextSecondary
-                            )
-                        }
-                    )
-                }
-                
-                // Extra bottom spacing
-                Spacer(modifier = Modifier.height(32.dp))
-                
-                // Navigation bar padding for button navigation phones
-                Spacer(modifier = Modifier.navigationBarsPadding())
             }
         }
     }

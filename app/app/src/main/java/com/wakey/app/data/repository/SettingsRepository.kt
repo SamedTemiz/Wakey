@@ -1,9 +1,11 @@
 package com.wakey.app.data.repository
 
+import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.media.RingtoneManager
+import com.wakey.app.data.billing.BillingManager
 import com.wakey.app.data.model.TaskType
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,9 +20,20 @@ import javax.inject.Singleton
  */
 @Singleton
 class SettingsRepository @Inject constructor(
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
+    private val billingManager: BillingManager
 ) {
     private val prefs: SharedPreferences = context.getSharedPreferences("app_settings", Context.MODE_PRIVATE)
+
+    // ============================================
+    // BILLING
+    // ============================================
+    
+    val isPremium: StateFlow<Boolean> = billingManager.isPremium
+    
+    fun launchPurchaseFlow(activity: Activity) {
+        billingManager.launchPurchaseFlow(activity)
+    }
     
     // ============================================
     // PREFERENCE KEYS

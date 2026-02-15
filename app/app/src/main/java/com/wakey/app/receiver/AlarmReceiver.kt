@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import com.wakey.app.data.model.Alarm
 import com.wakey.app.service.AlarmService
 
 /**
@@ -15,11 +16,10 @@ class AlarmReceiver : BroadcastReceiver() {
     
     companion object {
         const val TAG = "AlarmReceiver"
-        const val EXTRA_ALARM_ID = "extra_alarm_id"
     }
     
     override fun onReceive(context: Context, intent: Intent) {
-        val alarmId = intent.getIntExtra(EXTRA_ALARM_ID, -1)
+        val alarmId = intent.getIntExtra(Alarm.EXTRA_ID, -1)
         
         Log.d(TAG, "Alarm received: alarmId=$alarmId")
         

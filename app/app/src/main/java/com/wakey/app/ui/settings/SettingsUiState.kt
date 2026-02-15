@@ -33,5 +33,8 @@ data class SettingsUiState(
     val appVersion: String = "1.0.0",
     
     // Error state
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    
+    // Premium state
+    val isPremium: Boolean = false
 )

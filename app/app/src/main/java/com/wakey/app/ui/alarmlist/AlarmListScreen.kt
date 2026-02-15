@@ -43,11 +43,14 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import android.widget.Toast
+import android.app.Activity
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -72,6 +75,7 @@ import com.wakey.app.ui.theme.TextSecondary
 import com.wakey.app.ui.theme.VerticalTaskColor
 import com.wakey.app.ui.components.AlarmListBottomBar
 import com.wakey.app.ui.components.AlarmCard as AlarmCardComponent
+import com.wakey.app.ui.components.getTaskIcon
 import com.wakey.app.ui.components.getTaskIcon
 
 /**
@@ -143,15 +147,8 @@ fun AlarmListScreen(
                     )
                 }
                 
-                // Right side - Pencil: more_vert icon 24x24
-                IconButton(onClick = { /* Menu action */ }) {
-                    Icon(
-                        imageVector = Icons.Default.MoreVert,
-                        contentDescription = "Menu",
-                        tint = textSecondary,
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
+                // Right side - Empty to match layout
+                Spacer(modifier = Modifier.size(24.dp))
             }
             
             // Content
@@ -218,6 +215,13 @@ fun AlarmListScreen(
                 }
             },
             onSettingsClick = onNavigateToSettings,
+            onPremiumClick = {
+                val activity = context as? Activity
+                if (activity != null) {
+                    viewModel.purchasePremium(activity)
+                }
+            },
+            isPremium = uiState.isPremium,
             canAddAlarm = uiState.canAddAlarm,
             modifier = Modifier.align(Alignment.BottomCenter)
         )

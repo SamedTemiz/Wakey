@@ -24,6 +24,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.WorkspacePremium
 import androidx.compose.ui.unit.sp
 import androidx.compose.material.icons.outlined.AccessTime
 import androidx.compose.material.icons.outlined.Settings
@@ -33,6 +34,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -46,9 +48,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import com.wakey.app.ui.theme.AccentGold
 import com.wakey.app.ui.theme.AccentOrange
 import com.wakey.app.ui.theme.PrimaryCoral
 import com.wakey.app.ui.theme.TextSecondary
@@ -106,11 +110,13 @@ class CurvedCutoutShape(private val fabDiameter: Float, private val fabMargin: F
 fun AlarmListBottomBar(
     onAddClick: () -> Unit,
     onSettingsClick: () -> Unit,
+    onPremiumClick: () -> Unit,
+    isPremium: Boolean = false,
     canAddAlarm: Boolean = true,
     modifier: Modifier = Modifier
 ) {
     val iconColor = TextSecondary
-    val fabSize = 56.dp
+    val fabSize = 64.dp
     val backgroundColor = MaterialTheme.colorScheme.background
     
     Column(
@@ -119,48 +125,85 @@ fun AlarmListBottomBar(
             .background(backgroundColor)
     ) {
         // Bottom Nav Row - matching Pencil design exactly
-        // Height: 90dp with padding [12, 24, 34, 24] -> content area is 90 - 12 - 34 = 44dp
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 24.dp, end = 24.dp, top = 12.dp, bottom = 0.dp),
+                .padding(start = 24.dp, end = 24.dp, top = 8.dp, bottom = 0.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            // Left Icon - Schedule (current page indicator)
-            Icon(
-                imageVector = Icons.Outlined.AccessTime,
-                contentDescription = "Alarms",
-                tint = PrimaryCoral,
-                modifier = Modifier.size(28.dp)
-            )
+            // Left Icon - Premium Button (Only if not premium)
+            if (!isPremium) {
+                Surface(
+                    onClick = onPremiumClick,
+                    shape = RoundedCornerShape(12.dp),
+                    color = Color.Transparent,
+                    modifier = Modifier.clip(RoundedCornerShape(12.dp))
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .background(
+                                brush = Brush.verticalGradient(
+                                    colors = listOf(
+                                        Color(0xFFF6C57D), // accent-gold
+                                        Color(0xFFED9D6F)  // accent-peach
+                                    )
+                                )
+                            )
+                            .padding(horizontal = 10.dp, vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.WorkspacePremium,
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Text(
+                            text = "PRO",
+                            color = Color.White,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+            } else {
+                // Placeholder to keep fab centered
+                Box(modifier = Modifier.size(width = 60.dp, height = 28.dp))
+            }
             
-            // Center - Gradient FAB (inline, not floating)
-            Box(
+            // Center - Gradient FAB
+            Surface(
+                onClick = onAddClick,
+                enabled = canAddAlarm,
+                shape = CircleShape,
+                color = Color.Transparent,
+                shadowElevation = 8.dp,
+                tonalElevation = 0.dp,
                 modifier = Modifier
                     .size(fabSize)
                     .clip(CircleShape)
-                    .background(
-                        brush = Brush.linearGradient(
-                            colors = listOf(PrimaryCoral, AccentOrange),
-                            start = Offset(0f, 0f),
-                            end = Offset(fabSize.value, fabSize.value)
-                        )
-                    )
-                    .clickable(
-                        enabled = canAddAlarm,
-                        onClick = onAddClick,
-                        indication = null,
-                        interactionSource = remember { MutableInteractionSource() }
-                    ),
-                contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Add Alarm",
-                    tint = Color.White,
-                    modifier = Modifier.size(28.dp)
-                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(
+                            brush = Brush.linearGradient(
+                                colors = listOf(PrimaryCoral, AccentOrange),
+                                start = Offset(0f, 0f),
+                                end = Offset(fabSize.value * 2, fabSize.value * 2)
+                            )
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "Add Alarm",
+                        tint = Color.White,
+                        modifier = Modifier.size(32.dp)
+                    )
+                }
             }
             
             // Right Icon - Settings
@@ -170,11 +213,12 @@ fun AlarmListBottomBar(
                 tint = iconColor,
                 modifier = Modifier
                     .size(28.dp)
+                    .clip(CircleShape)
                     .clickable(onClick = onSettingsClick)
             )
         }
         
-        // Bottom padding (34dp from design) + navigation bar padding
+        // Bottom padding + navigation bar padding
         Spacer(
             modifier = Modifier
                 .fillMaxWidth()
@@ -182,7 +226,6 @@ fun AlarmListBottomBar(
                 .background(backgroundColor)
         )
         
-        // Navigation bar padding for phones with button navigation
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -194,7 +237,6 @@ fun AlarmListBottomBar(
 
 /**
  * Bottom App Bar for Set Alarm screen
- * Full-width gradient confirm button matching Pencil design
  */
 @Composable
 fun SetAlarmBottomBar(
@@ -209,9 +251,6 @@ fun SetAlarmBottomBar(
             .fillMaxWidth()
             .background(backgroundColor)
     ) {
-        // Confirm Button - Pencil: full width, height 56, cornerRadius 28
-        // Gradient: gold → peach (linear, rotation 90)
-        // Padding: [16, 24, 34, 24]
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -245,7 +284,6 @@ fun SetAlarmBottomBar(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    // Check icon - Pencil: 22x22
                     Icon(
                         imageVector = Icons.Default.Check,
                         contentDescription = null,
@@ -253,7 +291,6 @@ fun SetAlarmBottomBar(
                         modifier = Modifier.size(22.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    // Confirm text - Pencil: Inter 16px 600
                     androidx.compose.material3.Text(
                         text = "Confirm",
                         color = Color.White,
@@ -264,7 +301,6 @@ fun SetAlarmBottomBar(
             }
         }
         
-        // Bottom padding (34dp from design)
         Spacer(
             modifier = Modifier
                 .fillMaxWidth()
@@ -272,7 +308,6 @@ fun SetAlarmBottomBar(
                 .background(backgroundColor)
         )
         
-        // Navigation bar padding for phones with button navigation
         Box(
             modifier = Modifier
                 .fillMaxWidth()

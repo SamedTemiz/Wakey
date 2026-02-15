@@ -148,7 +148,7 @@ class AlarmScheduler(private val context: Context) {
      */
     private fun createPendingIntent(alarm: Alarm): PendingIntent {
         val intent = Intent(context, AlarmReceiver::class.java).apply {
-            putExtra(AlarmReceiver.EXTRA_ALARM_ID, alarm.id)
+            putExtra(Alarm.EXTRA_ID, alarm.id)
             addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES)
             addFlags(Intent.FLAG_RECEIVER_FOREGROUND)
         }

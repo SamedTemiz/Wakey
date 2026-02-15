@@ -87,8 +87,17 @@ dependencies {
     // ViewModel
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     
+    // Billing
+    implementation("com.android.billingclient:billing-ktx:6.2.0")
+    
+    // Wheel Picker
+    implementation(libs.wheel.picker.compose)
+
     // Testing
     testImplementation(libs.junit)
+    testImplementation("org.mockito:mockito-core:5.10.0")
+    testImplementation("org.mockito:mockito-inline:5.2.0")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))

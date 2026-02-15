@@ -32,12 +32,20 @@ class AlarmRingingViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(AlarmRingingUiState())
     val uiState: StateFlow<AlarmRingingUiState> = _uiState.asStateFlow()
     
+    init {
+        // Try to get alarm ID from SavedStateHandle as fallback
+        val id = savedStateHandle.get<Int>(Alarm.EXTRA_ID) ?: -1
+        if (id != -1) {
+            init(id)
+        }
+    }
+    
     /**
      * Initialize with alarm ID (called from activity/composable)
      */
     fun init(id: Int) {
         // Only load if not already initialized or if ID changed
-        if (alarmId != id) {
+        if (alarmId != id && id != -1) {
             alarmId = id
             loadAlarm()
         }

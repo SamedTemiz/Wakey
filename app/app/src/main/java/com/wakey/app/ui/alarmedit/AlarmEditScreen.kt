@@ -117,23 +117,14 @@ fun AlarmEditScreen(
         }
     }
     
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .statusBarsPadding() // Fix status bar overlap
-    ) {
-        // Main content - scrollable
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(bottom = 140.dp) // Space for bottom bar
-        ) {
-            // Header - Pencil: close + "Set Alarm" (Inter 17px 600) + "Reset"
+    androidx.compose.material3.Scaffold(
+        topBar = {
+            // Header - Sticky inside topBar
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.background)
+                    .statusBarsPadding()
                     .padding(horizontal = 16.dp, vertical = 8.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
@@ -168,366 +159,405 @@ fun AlarmEditScreen(
                     modifier = Modifier.clickable { viewModel.resetToDefaults() }
                 )
             }
-            
-            Spacer(modifier = Modifier.height(8.dp))
-            
-            /* AM/PM selector - removed for 24-hour format
-            // AM/PM selector
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = "AM",
-                    fontSize = 16.sp,
-                    fontWeight = if (uiState.hour < 12) FontWeight.Bold else FontWeight.Normal,
-                    color = if (uiState.hour < 12) PrimaryCoral else TextSecondary,
-                    modifier = Modifier
-                        .clickable { 
-                            if (uiState.hour >= 12) viewModel.setTime(uiState.hour - 12, uiState.minute) 
-                        }
-                        .padding(8.dp)
-                )
-                Text(
-                    text = " • ",
-                    color = textSecondary
-                )
-                Text(
-                    text = "PM",
-                    fontSize = 16.sp,
-                    fontWeight = if (uiState.hour >= 12) FontWeight.Bold else FontWeight.Normal,
-                    color = if (uiState.hour >= 12) PrimaryCoral else textSecondary,
-                    modifier = Modifier
-                        .clickable { 
-                            if (uiState.hour < 12) viewModel.setTime(uiState.hour + 12, uiState.minute) 
-                        }
-                        .padding(8.dp)
-                )
-            }
-            */
-            
-            // Time Picker Section - Pencil: padding 24, gap 16
+        },
+        bottomBar = {
+            // Bottom Bar with curved background - Sticky inside bottomBar
+            SetAlarmBottomBar(
+                onSetClick = { viewModel.saveAlarm() },
+                isLoading = uiState.isLoading,
+                modifier = Modifier.fillMaxWidth()
+            )
+        },
+        containerColor = MaterialTheme.colorScheme.background
+    ) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+            // Main content - scrollable
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(bottom = 16.dp) // Small padding at bottom of scroll
             ) {
-                // Time Circle - Pencil: 220x220 with angular gradient stroke
-                Box(
-                    modifier = Modifier
-                        .size(220.dp)
-                        .clickable { showTimePicker = true },
-                    contentAlignment = Alignment.Center
+                Spacer(modifier = Modifier.height(8.dp))
+                
+                /* AM/PM selector - removed for 24-hour format
+                // AM/PM selector
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
                 ) {
-                    // Gradient ring stroke
-                    Canvas(modifier = Modifier.size(220.dp)) {
-                        val strokeWidth = 6.dp.toPx()
-                        val radius = (size.minDimension - strokeWidth) / 2
-                        
-                        // Angular gradient: peach → gold → gray
-                        drawCircle(
-                            brush = Brush.sweepGradient(
-                                0f to AccentOrange,
-                                0.25f to AccentGold,
-                                0.3f to Color(0xFFE4E4E7),
-                                1f to Color(0xFFE4E4E7)
-                            ),
-                            radius = radius,
-                            style = Stroke(width = strokeWidth)
-                        )
-                    }
-                    
-                    // Time display content - Pencil: vertical layout, gap 4
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
+                    Text(
+                        text = "AM",
+                        fontSize = 16.sp,
+                        fontWeight = if (uiState.hour < 12) FontWeight.Bold else FontWeight.Normal,
+                        color = if (uiState.hour < 12) PrimaryCoral else TextSecondary,
+                        modifier = Modifier
+                            .clickable { 
+                                if (uiState.hour >= 12) viewModel.setTime(uiState.hour - 12, uiState.minute) 
+                            }
+                            .padding(8.dp)
+                    )
+                    Text(
+                        text = " • ",
+                        color = textSecondary
+                    )
+                    Text(
+                        text = "PM",
+                        fontSize = 16.sp,
+                        fontWeight = if (uiState.hour >= 12) FontWeight.Bold else FontWeight.Normal,
+                        color = if (uiState.hour >= 12) PrimaryCoral else textSecondary,
+                        modifier = Modifier
+                            .clickable { 
+                                if (uiState.hour < 12) viewModel.setTime(uiState.hour + 12, uiState.minute) 
+                            }
+                            .padding(8.dp)
+                    )
+                }
+                */
+                
+                // Time Picker Section - Pencil: padding 24, gap 16
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    // Time Circle - Pencil: 220x220 with angular gradient stroke
+                    Box(
+                        modifier = Modifier
+                            .size(220.dp)
+                            .clickable { showTimePicker = true },
+                        contentAlignment = Alignment.Center
                     ) {
-                        // Time - Pencil: Montserrat 52px weight 300
-                        val context = androidx.compose.ui.platform.LocalContext.current
-                        val (timeDisplay, _) = com.wakey.app.utils.TimeFormatter.formatTime(
-                            context, uiState.hour, uiState.minute
-                        )
-                        
-                        Text(
-                            text = timeDisplay,
-                            style = MaterialTheme.typography.displayLarge.copy(
-                                fontSize = 52.sp,
-                                fontWeight = FontWeight.Light
-                            ),
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                        
-                        // Check device time format
-                        val is24HourFormat = android.text.format.DateFormat.is24HourFormat(context)
-                        
-                        // AM/PM Toggle - Only show for 12-hour format
-                        if (!is24HourFormat) {
-                            Spacer(modifier = Modifier.height(4.dp))
+                        // Gradient ring stroke
+                        Canvas(modifier = Modifier.size(220.dp)) {
+                            val strokeWidth = 6.dp.toPx()
+                            val radius = (size.minDimension - strokeWidth) / 2
                             
-                            // Pencil: cornerRadius 16, fill bg-card, padding 4
-                            Row(
-                                modifier = Modifier
-                                    .clip(RoundedCornerShape(16.dp))
-                                    .background(CardBackground)
-                                    .padding(4.dp)
-                            ) {
-                                // AM button
-                                Box(
-                                    modifier = Modifier
-                                        .clip(RoundedCornerShape(12.dp))
-                                        .background(if (uiState.hour < 12) AccentOrange else Color.Transparent)
-                                        .clickable { 
-                                            if (uiState.hour >= 12) viewModel.setTime(uiState.hour - 12, uiState.minute) 
-                                        }
-                                        .size(width = 40.dp, height = 28.dp),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Text(
-                                        text = "AM",
-                                        style = MaterialTheme.typography.labelSmall.copy(
-                                            fontSize = 12.sp,
-                                            fontWeight = if (uiState.hour < 12) FontWeight.SemiBold else FontWeight.Medium
-                                        ),
-                                        color = if (uiState.hour < 12) Color.White else textSecondary
-                                    )
-                                }
+                            // Angular gradient: peach → gold → gray
+                            drawCircle(
+                                brush = Brush.sweepGradient(
+                                    0f to AccentOrange,
+                                    0.25f to AccentGold,
+                                    0.3f to Color(0xFFE4E4E7),
+                                    1f to Color(0xFFE4E4E7)
+                                ),
+                                radius = radius,
+                                style = Stroke(width = strokeWidth)
+                            )
+                        }
+                        
+                        // Time display content - Pencil: vertical layout, gap 4
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            // Time - Pencil: Montserrat 52px weight 300
+                            val context = androidx.compose.ui.platform.LocalContext.current
+                            val (timeDisplay, _) = com.wakey.app.utils.TimeFormatter.formatTime(
+                                context, uiState.hour, uiState.minute
+                            )
+                            
+                            Text(
+                                text = timeDisplay,
+                                style = MaterialTheme.typography.displayLarge.copy(
+                                    fontSize = 52.sp,
+                                    fontWeight = FontWeight.Light
+                                ),
+                                color = MaterialTheme.colorScheme.onBackground
+                            )
+                            
+                            // Check device time format
+                            val is24HourFormat = android.text.format.DateFormat.is24HourFormat(context)
+                            
+                            // AM/PM Toggle - Only show for 12-hour format
+                            if (!is24HourFormat) {
+                                Spacer(modifier = Modifier.height(4.dp))
                                 
-                                // PM button
-                                Box(
+                                // Pencil: cornerRadius 16, fill bg-card, padding 4
+                                Row(
                                     modifier = Modifier
-                                        .clip(RoundedCornerShape(12.dp))
-                                        .background(if (uiState.hour >= 12) AccentOrange else Color.Transparent)
-                                        .clickable { 
-                                            if (uiState.hour < 12) viewModel.setTime(uiState.hour + 12, uiState.minute) 
-                                        }
-                                        .size(width = 40.dp, height = 28.dp),
-                                    contentAlignment = Alignment.Center
+                                        .clip(RoundedCornerShape(16.dp))
+                                        .background(CardBackground)
+                                        .padding(4.dp)
                                 ) {
-                                    Text(
-                                        text = "PM",
-                                        style = MaterialTheme.typography.labelSmall.copy(
-                                            fontSize = 12.sp,
-                                            fontWeight = if (uiState.hour >= 12) FontWeight.SemiBold else FontWeight.Medium
-                                        ),
-                                        color = if (uiState.hour >= 12) Color.White else textSecondary
-                                    )
+                                    // AM button
+                                    Box(
+                                        modifier = Modifier
+                                            .clip(RoundedCornerShape(12.dp))
+                                            .background(if (uiState.hour < 12) AccentOrange else Color.Transparent)
+                                            .clickable { 
+                                                if (uiState.hour >= 12) viewModel.setTime(uiState.hour - 12, uiState.minute) 
+                                            }
+                                            .size(width = 40.dp, height = 28.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = "AM",
+                                            style = MaterialTheme.typography.labelSmall.copy(
+                                                fontSize = 12.sp,
+                                                fontWeight = if (uiState.hour < 12) FontWeight.SemiBold else FontWeight.Medium
+                                            ),
+                                            color = if (uiState.hour < 12) Color.White else textSecondary
+                                        )
+                                    }
+                                    
+                                    // PM button
+                                    Box(
+                                        modifier = Modifier
+                                            .clip(RoundedCornerShape(12.dp))
+                                            .background(if (uiState.hour >= 12) AccentOrange else Color.Transparent)
+                                            .clickable { 
+                                                if (uiState.hour < 12) viewModel.setTime(uiState.hour + 12, uiState.minute) 
+                                            }
+                                            .size(width = 40.dp, height = 28.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = "PM",
+                                            style = MaterialTheme.typography.labelSmall.copy(
+                                                fontSize = 12.sp,
+                                                fontWeight = if (uiState.hour >= 12) FontWeight.SemiBold else FontWeight.Medium
+                                            ),
+                                            color = if (uiState.hour >= 12) Color.White else textSecondary
+                                        )
+                                    }
                                 }
                             }
                         }
                     }
-                }
-                
-                Spacer(modifier = Modifier.height(16.dp))
-                
-                // Alarm in label - Pencil: alarm icon + text, gap 6
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Alarm,
-                        contentDescription = null,
-                        tint = textSecondary,
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Spacer(modifier = Modifier.width(6.dp))
-                    val alarmInText = com.wakey.app.utils.TimeFormatter.formatTimeUntilAlarm(uiState.hour, uiState.minute)
-                    Text(
-                        text = "Alarm in $alarmInText",
-                        style = MaterialTheme.typography.bodySmall.copy(
-                            fontSize = 13.sp
-                        ),
-                        color = textSecondary
-                    )
-                }
-            }
-            
-            // ============================================
-            // MISSION SECTION - Pencil: comes after Time Picker
-            // ============================================
-            Column(
-                modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp)
-            ) {
-                // Mission Header - Pencil: "Mission" + MANDATORY badge
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Mission",
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.SemiBold
-                        ),
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
                     
-                    // MANDATORY badge - Pencil: cornerRadius 8, fill #FEE2E2, padding [4, 8]
-                    Box(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(Color(0xFFFEE2E2))
-                            .padding(horizontal = 8.dp, vertical = 4.dp)
+                    Spacer(modifier = Modifier.height(16.dp))
+                    
+                    // Alarm in label - Pencil: alarm icon + text, gap 6
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
                     ) {
+                        Icon(
+                            imageVector = Icons.Default.Alarm,
+                            contentDescription = null,
+                            tint = textSecondary,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        val alarmInText = com.wakey.app.utils.TimeFormatter.formatTimeUntilAlarm(uiState.hour, uiState.minute)
                         Text(
-                            text = "MANDATORY",
-                            style = MaterialTheme.typography.labelSmall.copy(
-                                fontSize = 10.sp,
-                                fontWeight = FontWeight.SemiBold
+                            text = "Alarm in $alarmInText",
+                            style = MaterialTheme.typography.bodySmall.copy(
+                                fontSize = 13.sp
                             ),
-                            color = PrimaryCoral
+                            color = textSecondary
                         )
                     }
                 }
                 
-                Spacer(modifier = Modifier.height(12.dp))
-                
-                // Mission Options - Pencil: horizontal row, gap 12, height 80
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                // ============================================
+                // MISSION SECTION - Pencil: comes after Time Picker
+                // ============================================
+                Column(
+                    modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp)
                 ) {
-                    // Steps option - Walk 30 steps to dismiss
-                    MissionOptionCard(
-                        icon = Icons.Default.DirectionsWalk,
-                        label = "Steps",
-                        isSelected = uiState.taskType == TaskType.STEPS,
-                        onClick = { viewModel.setTaskType(TaskType.STEPS) },
-                        modifier = Modifier.weight(1f)
-                    )
-                    
-                    // Hold Vertical option - Hold phone upright for 20 seconds
-                    MissionOptionCard(
-                        icon = Icons.Default.PhoneAndroid,
-                        label = "Hold",
-                        isSelected = uiState.taskType == TaskType.HOLD_VERTICAL,
-                        onClick = { viewModel.setTaskType(TaskType.HOLD_VERTICAL) },
-                        modifier = Modifier.weight(1f)
-                    )
-                    
-                    // Wait option - Wait 15 seconds to dismiss
-                    MissionOptionCard(
-                        icon = Icons.Default.Timer,
-                        label = "Wait",
-                        isSelected = uiState.taskType == TaskType.TIME_DELAY,
-                        onClick = { viewModel.setTaskType(TaskType.TIME_DELAY) },
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-            }
-            
-            // ============================================
-            // SETTINGS SECTION - Pencil: comes after Mission
-            // ============================================
-            Column(
-                modifier = Modifier.padding(horizontal = 24.dp)
-            ) {
-                // Ringtone Picker setup
-                val context = androidx.compose.ui.platform.LocalContext.current
-                val ringtoneLauncher = androidx.activity.compose.rememberLauncherForActivityResult(
-                    contract = androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult()
-                ) { result ->
-                    if (result.resultCode == android.app.Activity.RESULT_OK) {
-                        val uri = result.data?.getParcelableExtra<android.net.Uri>(android.media.RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
-                        if (uri != null) {
-                            viewModel.setRingtoneUri(uri.toString())
-                        }
-                    }
-                }
-                
-                val ringtoneTitle = remember(uiState.ringtoneUri) {
-                    if (uiState.ringtoneUri.isEmpty()) "Default"
-                    else {
-                        try {
-                            val ringtone = android.media.RingtoneManager.getRingtone(
-                                context, 
-                                android.net.Uri.parse(uiState.ringtoneUri)
+                    // Mission Header - Pencil: "Mission" + MANDATORY badge
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Mission",
+                            style = MaterialTheme.typography.titleMedium.copy(
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.SemiBold
+                            ),
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                        
+                        // MANDATORY badge - Pencil: cornerRadius 8, fill #FEE2E2, padding [4, 8]
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(Color(0xFFFEE2E2))
+                                .padding(horizontal = 8.dp, vertical = 4.dp)
+                        ) {
+                            Text(
+                                text = "MANDATORY",
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    fontSize = 10.sp,
+                                    fontWeight = FontWeight.SemiBold
+                                ),
+                                color = PrimaryCoral
                             )
-                           ringtone.getTitle(context)
-                        } catch (e: Exception) {
-                            "Custom Ringtone"
                         }
+                    }
+                    
+                    Spacer(modifier = Modifier.height(12.dp))
+                    
+                    // Mission Options - Pencil: horizontal row, gap 12, height 80
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        // Steps option - Walk 30 steps to dismiss
+                        MissionOptionCard(
+                            icon = Icons.Default.DirectionsWalk,
+                            label = "Steps",
+                            isSelected = uiState.taskType == TaskType.STEPS,
+                            onClick = { viewModel.setTaskType(TaskType.STEPS) },
+                            modifier = Modifier.weight(1f)
+                        )
+                        
+                        // Hold Vertical option - Hold phone upright for 20 seconds
+                        MissionOptionCard(
+                            icon = Icons.Default.PhoneAndroid,
+                            label = "Hold",
+                            isSelected = uiState.taskType == TaskType.HOLD_VERTICAL,
+                            onClick = { viewModel.setTaskType(TaskType.HOLD_VERTICAL) },
+                            modifier = Modifier.weight(1f)
+                        )
+                        
+                        // Wait option - Wait 15 seconds to dismiss
+                        MissionOptionCard(
+                            icon = Icons.Default.Timer,
+                            label = "Wait",
+                            isSelected = uiState.taskType == TaskType.TIME_DELAY,
+                            onClick = { viewModel.setTaskType(TaskType.TIME_DELAY) },
+                            modifier = Modifier.weight(1f)
+                        )
                     }
                 }
                 
-                // Day picker dialog state
-                var showDayPickerDialog by remember { mutableStateOf(false) }
-                
-                // Repeat Row - Pencil: repeat icon + "Repeat" + value + chevron
-                // No inline day selector - just shows value like "Mon - Fri"
-                SettingsRow(
-                    icon = Icons.Default.Repeat,
-                    title = "Repeat",
-                    value = getRepeatText(uiState.selectedDays),
-                    valueColor = AccentOrange,
-                    showBorder = true,
-                    onClick = { showDayPickerDialog = true }
-                )
-                
-                // Sound Row - Pencil: music_note icon + "Sound" + value + chevron
-                SettingsRow(
-                    icon = Icons.Default.MusicNote,
-                    title = "Sound",
-                    value = ringtoneTitle,
-                    valueColor = textSecondary,
-                    showBorder = true,
-                    onClick = {
-                        val intent = android.content.Intent(android.media.RingtoneManager.ACTION_RINGTONE_PICKER).apply {
-                            putExtra(android.media.RingtoneManager.EXTRA_RINGTONE_TYPE, android.media.RingtoneManager.TYPE_ALARM)
-                            putExtra(android.media.RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true)
-                            putExtra(android.media.RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, false)
-                            
-                            val currentUri = if (uiState.ringtoneUri.isNotEmpty()) 
-                                android.net.Uri.parse(uiState.ringtoneUri) 
-                            else 
-                                android.media.RingtoneManager.getDefaultUri(android.media.RingtoneManager.TYPE_ALARM)
-                                
-                            putExtra(android.media.RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, currentUri)
+                // ============================================
+                // SETTINGS SECTION - Pencil: comes after Mission
+                // ============================================
+                Column(
+                    modifier = Modifier.padding(horizontal = 24.dp)
+                ) {
+                    // Ringtone Picker setup
+                    val context = androidx.compose.ui.platform.LocalContext.current
+                    val ringtoneLauncher = androidx.activity.compose.rememberLauncherForActivityResult(
+                        contract = androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult()
+                    ) { result ->
+                        if (result.resultCode == android.app.Activity.RESULT_OK) {
+                            val uri = result.data?.getParcelableExtra<android.net.Uri>(android.media.RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
+                            if (uri != null) {
+                                viewModel.setRingtoneUri(uri.toString())
+                            }
                         }
-                        ringtoneLauncher.launch(intent)
                     }
-                )
-                
-                // Label Row - Pencil: label icon + "Label" + value + chevron
-                SettingsRow(
-                    icon = Icons.Default.Label,
-                    title = "Label",
-                    value = if (uiState.label.isEmpty()) "Add label" else uiState.label,
-                    valueColor = textSecondary,
-                    showBorder = false,
-                    onClick = { /* TODO: Show label input dialog */ }
-                )
-                
-                // Day Picker Dialog
-                if (showDayPickerDialog) {
-                    DayPickerDialog(
-                        selectedDays = uiState.selectedDays,
-                        onDayToggle = viewModel::toggleDay,
-                        onDismiss = { showDayPickerDialog = false }
+                    
+                    val ringtoneTitle = remember(uiState.ringtoneUri) {
+                        if (uiState.ringtoneUri.isEmpty()) "Default"
+                        else {
+                            try {
+                                val ringtone = android.media.RingtoneManager.getRingtone(
+                                    context, 
+                                    android.net.Uri.parse(uiState.ringtoneUri)
+                                )
+                                ringtone.getTitle(context)
+                            } catch (e: Exception) {
+                                "Custom Ringtone"
+                            }
+                        }
+                    }
+                    
+                    // Day picker dialog state
+                    var showDayPickerDialog by remember { mutableStateOf(false) }
+                    
+                    // Repeat Row - Pencil: repeat icon + "Repeat" + value + chevron
+                    // No inline day selector - just shows value like "Mon - Fri"
+                    SettingsRow(
+                        icon = Icons.Default.Repeat,
+                        title = "Repeat",
+                        value = getRepeatText(uiState.selectedDays),
+                        valueColor = AccentOrange,
+                        showBorder = true,
+                        onClick = { showDayPickerDialog = true }
                     )
+                    
+                    // Sound Row - Pencil: music_note icon + "Sound" + value + chevron
+                    SettingsRow(
+                        icon = Icons.Default.MusicNote,
+                        title = "Sound",
+                        value = ringtoneTitle,
+                        valueColor = textSecondary,
+                        showBorder = true,
+                        onClick = {
+                            val intent = android.content.Intent(android.media.RingtoneManager.ACTION_RINGTONE_PICKER).apply {
+                                putExtra(android.media.RingtoneManager.EXTRA_RINGTONE_TYPE, android.media.RingtoneManager.TYPE_ALARM)
+                                putExtra(android.media.RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true)
+                                putExtra(android.media.RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, false)
+                                
+                                val currentUri = if (uiState.ringtoneUri.isNotEmpty()) 
+                                    android.net.Uri.parse(uiState.ringtoneUri) 
+                                else 
+                                    android.media.RingtoneManager.getDefaultUri(android.media.RingtoneManager.TYPE_ALARM)
+                                    
+                                putExtra(android.media.RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, currentUri)
+                            }
+                            ringtoneLauncher.launch(intent)
+                        }
+                    )
+                    
+                    // Label Row - Pencil: label icon + "Label" + value + chevron
+                    SettingsRow(
+                        icon = Icons.Default.Label,
+                        title = "Label",
+                        value = if (uiState.label.isEmpty()) "Add label" else uiState.label,
+                        valueColor = textSecondary,
+                        showBorder = false,
+                        onClick = { /* TODO: Show label input dialog */ }
+                    )
+                    
+                    // Delete Alarm Button
+                    if (uiState.isEditMode) {
+                        Spacer(modifier = Modifier.height(24.dp))
+                        androidx.compose.material3.Button(
+                            onClick = { viewModel.deleteAlarm() },
+                            colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.errorContainer,
+                                contentColor = MaterialTheme.colorScheme.onErrorContainer
+                            ),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(56.dp),
+                            shape = RoundedCornerShape(16.dp),
+                            elevation = androidx.compose.material3.ButtonDefaults.buttonElevation(0.dp)
+                        ) {
+                            Text(
+                                text = "Delete Alarm",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+                    }
+                    
+                    // Day Picker Dialog
+                    if (showDayPickerDialog) {
+                        DayPickerDialog(
+                            selectedDays = uiState.selectedDays,
+                            onDayToggle = viewModel::toggleDay,
+                            onDismiss = { showDayPickerDialog = false }
+                        )
+                    }
                 }
+                
+                // Spacer to push content up from bottom bar
+                Spacer(modifier = Modifier.weight(1f))
             }
             
-            // Spacer to push content up from bottom bar
-            Spacer(modifier = Modifier.weight(1f))
+            // Snackbar
+            SnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 16.dp)
+            )
         }
-        
-        // Bottom Bar with curved background
-        SetAlarmBottomBar(
-            onSetClick = { viewModel.saveAlarm() },
-            isLoading = uiState.isLoading,
-            modifier = Modifier.align(Alignment.BottomCenter)
-        )
-        
-        // Snackbar
-        SnackbarHost(
-            hostState = snackbarHostState,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 130.dp)
-        )
     }
     
     // Time Picker Dialog
@@ -849,7 +879,6 @@ private fun MissionOptionCard(
 /**
  * Time picker dialog
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TimePickerDialog(
     initialHour: Int,
@@ -857,16 +886,9 @@ private fun TimePickerDialog(
     onConfirm: (Int, Int) -> Unit,
     onDismiss: () -> Unit
 ) {
-    // Get device's time format preference
-    val context = androidx.compose.ui.platform.LocalContext.current
-    val is24Hour = android.text.format.DateFormat.is24HourFormat(context)
-    
-    val timePickerState = rememberTimePickerState(
-        initialHour = initialHour,
-        initialMinute = initialMinute,
-        is24Hour = is24Hour
-    )
-    
+    var selectedHour by remember { mutableStateOf(initialHour) }
+    var selectedMinute by remember { mutableStateOf(initialMinute) }
+
     Dialog(onDismissRequest = onDismiss) {
         Card(
             shape = RoundedCornerShape(24.dp),
@@ -886,7 +908,15 @@ private fun TimePickerDialog(
                 
                 Spacer(modifier = Modifier.height(24.dp))
                 
-                TimePicker(state = timePickerState)
+                com.wakey.app.ui.components.RollerTimePicker(
+                    initialHour = initialHour,
+                    initialMinute = initialMinute,
+                    onTimeChange = { h, m ->
+                        if (h != -1) selectedHour = h
+                        if (m != -1) selectedMinute = m
+                    },
+                    modifier = Modifier.padding(vertical = 16.dp)
+                )
                 
                 Spacer(modifier = Modifier.height(24.dp))
                 
@@ -899,7 +929,7 @@ private fun TimePickerDialog(
                     }
                     Spacer(modifier = Modifier.width(8.dp))
                     androidx.compose.material3.TextButton(
-                        onClick = { onConfirm(timePickerState.hour, timePickerState.minute) }
+                        onClick = { onConfirm(selectedHour, selectedMinute) }
                     ) {
                         Text("OK", fontWeight = FontWeight.Bold, color = PrimaryCoral)
                     }

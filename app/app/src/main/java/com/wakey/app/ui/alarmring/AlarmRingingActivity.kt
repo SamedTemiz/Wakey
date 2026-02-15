@@ -2,6 +2,7 @@ package com.wakey.app.ui.alarmring
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
@@ -42,6 +43,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.wakey.app.data.model.Alarm
 import com.wakey.app.data.model.TaskType
 import com.wakey.app.MainActivity
 import com.wakey.app.service.AlarmService
@@ -62,6 +64,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class AlarmRingingActivity : ComponentActivity() {
     
     private val viewModel: AlarmRingingViewModel by viewModels()
+    private var alarmIdState by mutableStateOf(-1)
     
     override fun onStart() {
         super.onStart()
@@ -77,7 +80,7 @@ class AlarmRingingActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         
         // Get alarm ID from intent
-        val alarmId = intent.getIntExtra("alarmId", -1)
+        alarmIdState = intent.getIntExtra(Alarm.EXTRA_ID, -1)
         
         // Make activity full-screen and show on lock screen
         setupFullScreen()
@@ -87,7 +90,7 @@ class AlarmRingingActivity : ComponentActivity() {
             WakeyTheme {
                 AlarmRingingScreen(
                     viewModel = viewModel,
-                    alarmId = alarmId,
+                    alarmId = alarmIdState,
                     onDismiss = ::dismissAlarm,
                     onSnooze = ::snoozeAlarm
                 )
@@ -100,24 +103,33 @@ class AlarmRingingActivity : ComponentActivity() {
         setIntent(intent)
         
         // Pass new ID to ViewModel if valid
-        val newId = intent.getIntExtra("alarmId", -1)
+        val newId = intent.getIntExtra(Alarm.EXTRA_ID, -1)
         if (newId != -1) {
-             // ViewModel.init checks internally if it's the same ID, 
-             // so this is safe to call repeatedly.
+            alarmIdState = newId
             viewModel.init(newId)
         }
     }
 
     /**
-     * Setup full-screen display and lock screen flags
+     * Setup full-screen display and lock screen flags.
+     * Uses modern APIs for Android 8.0+ and fallback flags for older versions.
      */
     private fun setupFullScreen() {
-        window.addFlags(
-            WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
-            WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or
-            WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
-            WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
-        )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+            setShowWhenLocked(true)
+            setTurnScreenOn(true)
+            val keyguardManager = getSystemService(Context.KEYGUARD_SERVICE) as android.app.KeyguardManager
+            keyguardManager.requestDismissKeyguard(this, null)
+        } else {
+            @Suppress("DEPRECATION")
+            window.addFlags(
+                WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or
+                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
+                WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+            )
+        }
+        
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
     
     /**
@@ -160,7 +172,9 @@ fun AlarmRingingScreen(
 ) {
     // Initialize ViewModel with alarmId
     LaunchedEffect(alarmId) {
-        viewModel.init(alarmId)
+        if (alarmId != -1) {
+            viewModel.init(alarmId)
+        }
     }
     
     val uiState by viewModel.uiState.collectAsState()
@@ -638,4 +652,3 @@ private fun ActionButtons(
 private fun Modifier.alpha(alpha: Float): Modifier = this.then(
     Modifier.graphicsLayer { this.alpha = alpha }
 )
-

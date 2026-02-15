@@ -94,4 +94,8 @@ data class Alarm(
             else -> days.map { dayNames[it] }.joinToString(", ")
         }
     }
+
+    companion object {
+        const val EXTRA_ID = "alarm_id"
+    }
 }

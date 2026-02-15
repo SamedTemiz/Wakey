@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.LocalTime
 import javax.inject.Inject
 
 /**
@@ -29,7 +30,14 @@ class AlarmEditViewModel @Inject constructor(
     
     private val alarmId: Int? = savedStateHandle.get<Int>("alarmId")?.takeIf { it != -1 }
     
-    private val _uiState = MutableStateFlow(AlarmEditUiState())
+    private val _uiState = MutableStateFlow(
+        if (alarmId == null) {
+            val now = java.time.LocalTime.now()
+            AlarmEditUiState(hour = now.hour, minute = now.minute)
+        } else {
+            AlarmEditUiState()
+        }
+    )
     val uiState: StateFlow<AlarmEditUiState> = _uiState.asStateFlow()
 
     init {
@@ -168,6 +176,39 @@ class AlarmEditViewModel @Inject constructor(
         _uiState.update { it.copy(errorMessage = null) }
     }
     
+    /**
+     * Delete the current alarm
+     */
+    fun deleteAlarm() {
+        viewModelScope.launch {
+            val id = alarmId ?: return@launch
+            _uiState.update { it.copy(isLoading = true) }
+            
+            try {
+                // Cancel the alarm schedule
+                alarmScheduler.cancelAlarm(id)
+                
+                // Delete from database
+                alarmRepository.deleteAlarmById(id)
+                
+                _uiState.update { 
+                    it.copy(
+                        isLoading = false, 
+                        isSaved = true, 
+                        toastMessage = "Alarm deleted"
+                    ) 
+                }
+            } catch (e: Exception) {
+                _uiState.update { 
+                    it.copy(
+                        isLoading = false, 
+                        errorMessage = e.message ?: "Error deleting alarm"
+                    ) 
+                }
+            }
+        }
+    }
+
     /**
      * Reset alarm settings to defaults
      */
